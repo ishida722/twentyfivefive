@@ -47,11 +47,11 @@ static void set_timeStamp(uint8_t minuts)
 
 static void draw_timer(void)
 {
-	char time_text[2];
+	char leftMinuts, time_text[2];
 
 	window_set_background_color(s_window, GColorWhite);
-	snprintf(time_text, sizeof(time_text), "%d", leftTime/60+1);
-	/* snprintf(time_text, sizeof(time_text), "%d", "a"); */
+	leftMinuts = leftTime/60 + 1;
+	snprintf(time_text, sizeof(time_text), "%d", leftMinuts);
 	text_layer_set_text(left_time, time_text);
 
 	window_stack_push(s_window, true);
