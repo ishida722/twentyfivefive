@@ -40,6 +40,14 @@ static void set_timeStamp(uint8_t minuts)
 	timeStamp = time(NULL) + leftTime;
 }
 
+static void draw_timer(void)
+{
+	window_set_background_color(s_window, GColorGreen);
+	text_layer_set_text(left_time, leftTime/60 + 1);
+
+	window_stack_push(s_window, true);
+}
+
 static void mode_reverse(void)
 {
 	switch mode{
@@ -64,10 +72,10 @@ static void mode_reverse(void)
 }
 
 static void timer_handler(void *data) {
-	leftTime = timestamp - time(NULL);
+	leftTime = timeStamp - time(NULL);
 	draw_timer();
 
-	if(countdown<1){
+	if(leftTime<1){
 		vibes_double_pulse();
 		mode_reverse();
 	}else{
@@ -80,13 +88,6 @@ static void handle_window_unload(Window* window) {
 	destroy_ui();
 }
 
-static void draw_timer(void)
-{
-	window_set_background_color(s_window, GColorGreen);
-	text_layer_set_text(left_time, leftTime/60 + 1);
-
-	window_stack_push(s_window, true);
-}
 
 // click
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
