@@ -42,10 +42,26 @@ static void set_timeStamp(uint8_t minuts)
 
 static void draw_timer(void)
 {
+	char time_text[2];
+
 	window_set_background_color(s_window, GColorGreen);
-	text_layer_set_text(left_time, (leftTime/60 + 1));
+	snprintf(time_text, sizeof(time_text), "%d", countdown/60+1);
+	text_layer_set_text(left_time, time_text);
 
 	window_stack_push(s_window, true);
+}
+
+static void timer_handler(void *data) {
+	leftTime = timeStamp - time(NULL);
+	draw_timer();
+
+	if(leftTime<1){
+		vibes_double_pulse();
+		mode_reverse();
+	}else{
+	// 1000ms後にまたこの関数を実行
+	app_timer_register(1000, timer_handler, data);
+	}
 }
 
 static void mode_reverse(void)
@@ -71,18 +87,6 @@ static void mode_reverse(void)
 	draw_timer();
 }
 
-static void timer_handler(void *data) {
-	leftTime = timeStamp - time(NULL);
-	draw_timer();
-
-	if(leftTime<1){
-		vibes_double_pulse();
-		mode_reverse();
-	}else{
-	// 1000ms後にまたこの関数を実行
-	app_timer_register(1000, timer_handler, data);
-	}
-}
 
 static void handle_window_unload(Window* window) {
 	destroy_ui();
