@@ -54,7 +54,6 @@ static void draw_timer(void)
 	snprintf(time_text, sizeof(time_text), "%d", leftMinuts);
 	text_layer_set_text(left_time, time_text);
 
-	window_stack_push(s_window, true);
 }
 
 static void timer_handler(void *data) {
@@ -126,6 +125,7 @@ void show_timer(void) {
 
 	set_timeStamp(25);
 	draw_timer();
+	window_stack_push(s_window, true);
 }
 
 	void hide_timer(void) {
