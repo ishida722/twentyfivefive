@@ -125,7 +125,7 @@ void show_timer(void) {
 	mode = start;
 	initialise_ui();
 	s_status_bar = status_bar_layer_create();
-	layer_add_child(s_window, status_bar_layer_get_layer(s_status_bar));
+	layer_add_child(window_get_root_layer(s_window), status_bar_layer_get_layer(s_status_bar));
 
 	window_set_window_handlers(s_window, (WindowHandlers) {
 			.unload = handle_window_unload,
