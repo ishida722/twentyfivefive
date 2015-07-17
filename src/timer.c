@@ -43,14 +43,14 @@ static void set_timeStamp(uint8_t minuts)
 static void draw_timer(void)
 {
 	window_set_background_color(s_window, GColorGreen);
-	text_layer_set_text(left_time, leftTime/60 + 1);
+	text_layer_set_text(left_time, (leftTime/60 + 1));
 
 	window_stack_push(s_window, true);
 }
 
 static void mode_reverse(void)
 {
-	switch mode{
+	switch(mode){
 	case start:
 		set_timeStamp(25);
 		mode = work;
