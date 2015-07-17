@@ -6,6 +6,10 @@ MODE mode;
 time_t leftTime;
 static time_t timeStamp;
 
+// prottype
+
+static void mode_reverse(void);
+
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GFont s_res_bitham_34_medium_numbers;
@@ -45,7 +49,7 @@ static void draw_timer(void)
 	char time_text[2];
 
 	window_set_background_color(s_window, GColorGreen);
-	snprintf(time_text, sizeof(time_text), "%d", countdown/60+1);
+	snprintf(time_text, sizeof(time_text), "%d", leftTime/60+1);
 	text_layer_set_text(left_time, time_text);
 
 	window_stack_push(s_window, true);
