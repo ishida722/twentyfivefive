@@ -3,9 +3,10 @@
 
 typedef enum{start, work, rest}MODE;
 
-MODE mode;
-int leftTime;
+static MODE mode;
+static int leftTime;
 static time_t timeStamp;
+static GColor bgColor;
 
 // prottype
 
@@ -50,7 +51,7 @@ static void draw_timer(void)
 	static char time_text[]="00";
 	char leftMinuts;
 
-	window_set_background_color(s_window, GColorWhite);
+	window_set_background_color(s_window, bgColor);
 	leftMinuts = leftTime/60 + 1;
 	snprintf(time_text, sizeof(time_text), "%d", leftMinuts);
 	text_layer_set_text(left_time, time_text);
@@ -75,14 +76,17 @@ static void mode_reverse(void)
 	switch(mode){
 	case start:
 		set_timeStamp(25);
+		bgColor = GColorRed
 		mode = work;
 		break;
 	case work:
 		set_timeStamp(5);
+		bgColor = GColorGreen
 		mode = rest;
 		break;
 	case rest:
 		set_timeStamp(25);
+		bgColor = GColorRed
 		mode = work;
 		break;
 	/* default: */
