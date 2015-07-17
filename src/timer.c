@@ -51,7 +51,7 @@ static void draw_timer(void)
 	/* char leftMinuts; */
 
 	window_set_background_color(s_window, GColorWhite);
-	leftMinuts = leftTime/60 + 1;
+	/* leftMinuts = leftTime/60 + 1; */
 	/* snprintf(time_text, sizeof(time_text), "%d", leftMinuts); */
 	snprintf(time_text, sizeof(time_text), "%d", 10);
 	text_layer_set_text(left_time, time_text);
