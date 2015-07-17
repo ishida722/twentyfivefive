@@ -1,7 +1,10 @@
 #include <pebble.h>
 #include "timer.h"
 
+enum{PERSIST_TIME_STAMP, PERSIST_MODE};
 typedef enum{start, work, rest}MODE;
+
+static StatusBarLayer *s_status_bar;
 
 static MODE mode;
 static int leftTime;
@@ -121,6 +124,8 @@ static void handle_window_unload(Window* window) {
 void show_timer(void) {
 	mode = start;
 	initialise_ui();
+	s_status_bar = status_bar_layer_create();
+	layer_add_child(window_layer, status_bar_layer_get_layer(s_status_bar));
 
 	window_set_window_handlers(s_window, (WindowHandlers) {
 			.unload = handle_window_unload,
@@ -128,6 +133,7 @@ void show_timer(void) {
 
 	window_set_click_config_provider(s_window, click_config_provider);
 
+	bgColor = GColorBlue;
 	set_timeStamp(25);
 	draw_timer();
 	window_stack_push(s_window, true);
