@@ -76,17 +76,17 @@ static void mode_reverse(void)
 	switch(mode){
 	case start:
 		set_timeStamp(25);
-		bgColor = GColorRed
+		bgColor = GColorRed;
 		mode = work;
 		break;
 	case work:
 		set_timeStamp(5);
-		bgColor = GColorGreen
+		bgColor = GColorGreen;
 		mode = rest;
 		break;
 	case rest:
 		set_timeStamp(25);
-		bgColor = GColorRed
+		bgColor = GColorRed;
 		mode = work;
 		break;
 	/* default: */
