@@ -121,8 +121,18 @@ static void handle_window_unload(Window* window) {
 	destroy_ui();
 }
 
+void check_persist(void)
+{
+	if(!persist_exists(PERSIST_MODE)){
+		mode = start;
+	}else{
+		mode = persist_read_int(PERSIST_MODE);
+		timeStamp = persist_read_int(PERSIST_TIME_STAMP);
+	}
+	show_timer();
+}
+
 void show_timer(void) {
-	mode = start;
 	initialise_ui();
 	s_status_bar = status_bar_layer_create();
 	layer_add_child(window_get_root_layer(s_window), status_bar_layer_get_layer(s_status_bar));
