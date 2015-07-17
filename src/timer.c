@@ -47,7 +47,8 @@ static void set_timeStamp(uint8_t minuts)
 
 static void draw_timer(void)
 {
-	char leftMinuts, time_text[]="00";
+	char time_text[]="00";
+	/* char leftMinuts; */
 
 	window_set_background_color(s_window, GColorWhite);
 	leftMinuts = leftTime/60 + 1;
