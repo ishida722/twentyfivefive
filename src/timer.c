@@ -49,7 +49,7 @@ static void draw_timer(void)
 	char time_text[2];
 
 	window_set_background_color(s_window, GColorGreen);
-	snprintf(time_text, sizeof(time_text), "%d", uint8_t(leftTime/60+1));
+	snprintf(time_text, sizeof(time_text), "%d", (uint8_t)(leftTime/60+1));
 	text_layer_set_text(left_time, time_text);
 
 	window_stack_push(s_window, true);
