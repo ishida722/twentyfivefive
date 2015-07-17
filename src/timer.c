@@ -49,8 +49,8 @@ static void draw_timer(void)
 	char time_text[2];
 
 	window_set_background_color(s_window, GColorWhite);
-	snprintf(time_text, sizeof(time_text), "%d", (uint8_t)(leftTime/60+1));
-	text_layer_set_text(left_time, time_text);
+	/* snprintf(time_text, sizeof(time_text), "%d", (uint8_t)(leftTime/60+1)); */
+	/* text_layer_set_text(left_time, time_text); */
 
 	window_stack_push(s_window, true);
 }
@@ -91,12 +91,6 @@ static void mode_reverse(void)
 	draw_timer();
 }
 
-
-static void handle_window_unload(Window* window) {
-	destroy_ui();
-}
-
-
 // click
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 	if(mode==start) mode_reverse();
@@ -112,6 +106,10 @@ static void click_config_provider(void *context) {
 	window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
 	window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
 	window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+}
+
+static void handle_window_unload(Window* window) {
+	destroy_ui();
 }
 
 void show_timer(void) {
