@@ -4,6 +4,7 @@
 
 MODE mode;
 time_t leftTime;
+static time_t timeStamp;
 
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
@@ -33,20 +34,88 @@ static void destroy_ui(void) {
 }
 // END AUTO-GENERATED UI CODE
 
+static void set_timeStamp(uint8_t minuts)
+{
+	leftTime = 60 * minuts;
+	timeStamp = time(NULL) + leftTime;
+}
+
+static void mode_reverse(void)
+{
+	switch mode{
+	case start:
+		set_timeStamp(25);
+		mode = work;
+		break;
+	case work:
+		set_timeStamp(5);
+		mode = rest;
+		break;
+	case rest:
+		set_timeStamp(25);
+		mode = work;
+		break;
+	/* default: */
+	/* 	mode = start; */
+	/* 	break; */
+	}
+	app_timer_register(0, timer_handler, NULL);
+	draw_timer();
+}
+
+static void timer_handler(void *data) {
+	leftTime = timestamp - time(NULL);
+	draw_timer();
+
+	if(countdown<1){
+		vibes_double_pulse();
+		mode_reverse();
+	}else{
+	// 1000ms後にまたこの関数を実行
+	app_timer_register(1000, timer_handler, data);
+	}
+}
+
 static void handle_window_unload(Window* window) {
 	destroy_ui();
 }
 
-void show_timer(void) {
-	initialise_ui();
-	window_set_window_handlers(s_window, (WindowHandlers) {
-			.unload = handle_window_unload,
-			});
-
+static void draw_timer(void)
+{
 	window_set_background_color(s_window, GColorGreen);
 	text_layer_set_text(left_time, leftTime/60 + 1);
 
 	window_stack_push(s_window, true);
+}
+
+// click
+static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
+	if(mode==start) mode_reverse();
+}
+
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
+}
+
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
+}
+
+static void click_config_provider(void *context) {
+	window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+	window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+	window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+}
+
+void show_timer(void) {
+	initialise_ui();
+
+	window_set_window_handlers(s_window, (WindowHandlers) {
+			.unload = handle_window_unload,
+			});
+
+	window_set_click_config_provider(s_window, click_config_provider);
+
+	set_timeStamp(25);
+	draw_timer();
 }
 
 	void hide_timer(void) {
