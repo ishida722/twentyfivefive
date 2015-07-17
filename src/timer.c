@@ -54,7 +54,8 @@ static void draw_timer(void)
 	/* leftMinuts = leftTime/60 + 1; */
 	/* snprintf(time_text, sizeof(time_text), "%d", leftMinuts); */
 	snprintf(time_text, sizeof(time_text), "%d", 10);
-	text_layer_set_text(left_time, time_text);
+	/* text_layer_set_text(left_time, time_text); */
+	text_layer_set_text(left_time, "10");
 
 }
 
