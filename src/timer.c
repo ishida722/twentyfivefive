@@ -45,7 +45,7 @@ static void destroy_ui(void) {
 
 static void set_timeStamp(uint8_t minuts)
 {
-	leftTime = 60 * minuts;
+	leftTime = 60 * minuts - 1;
 	timeStamp = time(NULL) + leftTime;
 }
 
@@ -69,35 +69,39 @@ static void timer_handler(void *data) {
 		vibes_double_pulse();
 		mode_reverse();
 	}else{
-	// 1000mså¾Œã«ã¾ãŸã“ã®é–¢æ•°ã‚’å®Ÿè¡Œ
+	// 1000msŒã‚É‚Ü‚½‚±‚ÌŠÖ”‚ğÀs
 	app_timer_register(1000, timer_handler, data);
 	}
+}
+
+static void mode_change(uint8_t nextMode)
+{
+	switch(nextMode){
+	case rest:
+		set_timeStamp(5);
+		bgColor = GColorGreen;
+		mode = rest;
+		break;
+	case work:
+		set_timeStamp(25);
+		bgColor = GColorRed;
+		mode = work;
+		break;
+	}
+	app_timer_register(0, timer_handler, NULL);
+	draw_timer();
 }
 
 static void mode_reverse(void)
 {
 	switch(mode){
-	case start:
-		set_timeStamp(25);
-		bgColor = GColorRed;
-		mode = work;
-		break;
 	case work:
-		set_timeStamp(5);
-		bgColor = GColorGreen;
-		mode = rest;
+		mode_change(rest);
 		break;
 	case rest:
-		set_timeStamp(25);
-		bgColor = GColorRed;
-		mode = work;
+		mode_change(work);
 		break;
-	/* default: */
-	/* 	mode = start; */
-	/* 	break; */
 	}
-	app_timer_register(0, timer_handler, NULL);
-	draw_timer();
 }
 
 // click
