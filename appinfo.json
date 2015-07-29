@@ -12,7 +12,6 @@
     "sdkVersion": "3",
     "shortName": "25:5",
     "targetPlatforms": [
-        "aplite",
         "basalt"
     ],
     "uuid": "095c31a3-17c5-489f-9fc7-4497700cbb9e",

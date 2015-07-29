@@ -6,7 +6,7 @@ typedef enum{start, work, rest}MODE;
 
 static StatusBarLayer *s_status_bar;
 
-static MODE mode;
+static MODE mode = start;
 static int leftTime;
 static time_t timeStamp;
 static _Bool timerEnable = false;
@@ -16,6 +16,7 @@ static GColor bgColor;
 
 static void mode_reverse(void);
 static void mode_change(MODE nextMode);
+static void draw_timer(void);
 
 //////////////////////////////////////////////////////////////////////////////////
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
@@ -24,30 +25,31 @@ static GFont s_res_bitham_34_medium_numbers;
 static TextLayer *left_time;
 
 static void initialise_ui(void) {
-	s_window = window_create();
-	window_set_background_color(s_window, GColorClear);
-#ifndef PBL_SDK_3
-	window_set_fullscreen(s_window, false);
-#endif
-
-	s_res_bitham_34_medium_numbers = fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS);
-	// left_time
-	left_time = text_layer_create(GRect(45, 48, 51, 40));
-	text_layer_set_background_color(left_time, GColorClear);
-	text_layer_set_text(left_time, "00");
-	text_layer_set_text_alignment(left_time, GTextAlignmentCenter);
-	text_layer_set_font(left_time, s_res_bitham_34_medium_numbers);
-	layer_add_child(window_get_root_layer(s_window), (Layer *)left_time);
+  s_window = window_create();
+  window_set_background_color(s_window, GColorClear);
+  #ifndef PBL_SDK_3
+    window_set_fullscreen(s_window, 0);
+  #endif
+  
+  s_res_bitham_34_medium_numbers = fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS);
+  // left_time
+  left_time = text_layer_create(GRect(45, 48, 51, 40));
+  text_layer_set_background_color(left_time, GColorClear);
+  text_layer_set_text(left_time, "00");
+  text_layer_set_text_alignment(left_time, GTextAlignmentCenter);
+  text_layer_set_font(left_time, s_res_bitham_34_medium_numbers);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)left_time);
 }
 
 static void destroy_ui(void) {
-	window_destroy(s_window);
-	text_layer_destroy(left_time);
+  window_destroy(s_window);
+  text_layer_destroy(left_time);
 }
 // END AUTO-GENERATED UI CODE
 //////////////////////////////////////////////////////////////////////////////////
 
 static void timer_handler(void *data) {
+    if(!timerEnable) return;
 	leftTime = timeStamp - time(NULL);
 	draw_timer();
 
@@ -61,10 +63,12 @@ static void timer_handler(void *data) {
 
 static void set_timeStamp(uint8_t minuts)
 {
-	timerEnable = true;
-	leftTime = 60 * minuts - 1;
-	timeStamp = time(NULL) + leftTime;
-	persist_write_int(PERSIST_TIME_STAMP, timeStamp);
+    if(persist_exists(PERSIST_TIME_STAMP)){
+        timerEnable = true;
+        leftTime = 60 * minuts - 1;
+        timeStamp = time(NULL) + leftTime;
+        persist_write_int(PERSIST_TIME_STAMP, timeStamp);
+    }
 }
 
 static void start_timer(void)
@@ -77,8 +81,7 @@ static void stop_timer(void)
 {
 	timerEnable = false;
 	if(persist_exists(PERSIST_TIME_STAMP))
-		persist_delte(PERSIST_TIME_STAMP);
-	mode_change(start);
+		persist_delete(PERSIST_TIME_STAMP);
 }
 
 static void draw_timer(void)
@@ -97,6 +100,7 @@ static void mode_change(MODE nextMode)
 {
 	switch(nextMode){
 	case start:
+        leftTime = 60*25-1;
 		bgColor = GColorBlue;
 		stop_timer();
 		break;
@@ -119,6 +123,8 @@ static void mode_change(MODE nextMode)
 static void mode_reverse(void)
 {
 	switch(mode){
+    case start:
+        break;
 	case work:
 		mode_change(rest);
 		break;
@@ -130,7 +136,8 @@ static void mode_reverse(void)
 
 // click
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-	if(mode==start) mode_change(work);
+    if(mode==work || mode==rest) mode_change(start);
+	else mode_change(work);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -156,10 +163,9 @@ void check_persist(void)
 		persist_write_int(PERSIST_MODE, mode);
 	}else{
 		mode = persist_read_int(PERSIST_MODE);
-		if(persist_exists(PERSIST_TIME_STAMP)
+		if(persist_exists(PERSIST_TIME_STAMP))
 				timeStamp = persist_read_int(PERSIST_TIME_STAMP);
 	}
-	show_timer();
 }
 
 void show_timer(void) {
@@ -173,8 +179,8 @@ void show_timer(void) {
 
 	window_set_click_config_provider(s_window, click_config_provider);
 
-	mode_change(mode);
 	window_stack_push(s_window, true);
+	mode_change(mode);
 }
 
 void hide_timer(void) {

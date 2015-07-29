@@ -1,8 +1,8 @@
 #include <pebble.h>
 #include "timer.h"
-#include "common.h"
 
 static void init(void) {
+    check_persist();
 	show_timer();
 }
 
