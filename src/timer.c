@@ -17,7 +17,7 @@ static int leftTime;
 static time_t timeStamp;
 static _Bool timerEnable = false;
 static GColor bgColor;
-static Wakeupid s_wakeup_id;
+static WakeupId s_wakeup_id;
 
 // prottype
 
