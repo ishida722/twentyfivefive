@@ -60,6 +60,7 @@ static void timeout(void)
 	vibes_double_pulse();
 	if(persist_exists(PERSIST_TIME_STAMP))
 		persist_delete(PERSIST_TIME_STAMP);
+	wakeup_cancel_all();
 	mode_reverse();
 }
 
@@ -81,6 +82,8 @@ static void set_timeStamp(uint8_t minuts)
         timerEnable = true;
         leftTime = 60 * minuts - 1;
         timeStamp = time(NULL) + leftTime;
+		s_wakeup_id = wakeup_schedule(timeStamp, WAKEUP_REASON, true);
+		persist_write_int(WAKEUP_ID_KEY, s_wakeup_id);
         persist_write_int(PERSIST_TIME_STAMP, timeStamp);
     }
 }
@@ -94,6 +97,7 @@ static void start_timer(void)
 static void stop_timer(void)
 {
 	timerEnable = false;
+	wakeup_cancel_all();
 	if(persist_exists(PERSIST_TIME_STAMP))
 		persist_delete(PERSIST_TIME_STAMP);
 }
@@ -184,6 +188,12 @@ void check_persist(void)
 	}
 }
 
+static void wakeup_handler(WakeupId id, int32_t reson)
+{
+	check_persist();
+	show_timer();
+}
+
 void show_timer(void) {
 	initialise_ui();
 	s_status_bar = status_bar_layer_create();
@@ -193,9 +203,10 @@ void show_timer(void) {
 			.unload = handle_window_unload,
 			});
 
+	wakeup_service_subscribe(wakeup_handler);
 	window_set_click_config_provider(s_window, click_config_provider);
-
 	window_stack_push(s_window, true);
+
 	mode_change(mode);
 }
 
