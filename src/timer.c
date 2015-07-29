@@ -15,6 +15,7 @@ static GColor bgColor;
 // prottype
 
 static void mode_reverse(void);
+static void mode_change(MODE nextMode);
 
 //////////////////////////////////////////////////////////////////////////////////
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
@@ -45,6 +46,18 @@ static void destroy_ui(void) {
 }
 // END AUTO-GENERATED UI CODE
 //////////////////////////////////////////////////////////////////////////////////
+
+static void timer_handler(void *data) {
+	leftTime = timeStamp - time(NULL);
+	draw_timer();
+
+	if(leftTime<1){
+		vibes_double_pulse();
+		mode_reverse();
+	}else{
+	app_timer_register(1000, timer_handler, data);
+	}
+}
 
 static void set_timeStamp(uint8_t minuts)
 {
@@ -79,17 +92,6 @@ static void draw_timer(void)
 	text_layer_set_text(left_time, time_text);
 }
 
-static void timer_handler(void *data) {
-	leftTime = timeStamp - time(NULL);
-	draw_timer();
-
-	if(leftTime<1){
-		vibes_double_pulse();
-		mode_reverse();
-	}else{
-	app_timer_register(1000, timer_handler, data);
-	}
-}
 
 static void mode_change(MODE nextMode)
 {
