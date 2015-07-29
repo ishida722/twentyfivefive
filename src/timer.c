@@ -9,12 +9,14 @@ static StatusBarLayer *s_status_bar;
 static MODE mode;
 static int leftTime;
 static time_t timeStamp;
+static _Bool timerEnable = false;
 static GColor bgColor;
 
 // prottype
 
 static void mode_reverse(void);
 
+//////////////////////////////////////////////////////////////////////////////////
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GFont s_res_bitham_34_medium_numbers;
@@ -42,11 +44,28 @@ static void destroy_ui(void) {
 	text_layer_destroy(left_time);
 }
 // END AUTO-GENERATED UI CODE
+//////////////////////////////////////////////////////////////////////////////////
 
 static void set_timeStamp(uint8_t minuts)
 {
+	timerEnable = true;
 	leftTime = 60 * minuts - 1;
 	timeStamp = time(NULL) + leftTime;
+	persist_write_int(PERSIST_TIME_STAMP, timeStamp);
+}
+
+static void start_timer(void)
+{
+	timerEnable = true;
+	app_timer_register(0, timer_handler, NULL);
+}
+
+static void stop_timer(void)
+{
+	timerEnable = false;
+	if(persist_exists(PERSIST_TIME_STAMP))
+		persist_delte(PERSIST_TIME_STAMP);
+	mode_change(start);
 }
 
 static void draw_timer(void)
@@ -58,7 +77,6 @@ static void draw_timer(void)
 	leftMinuts = leftTime/60 + 1;
 	snprintf(time_text, sizeof(time_text), "%d", leftMinuts);
 	text_layer_set_text(left_time, time_text);
-
 }
 
 static void timer_handler(void *data) {
@@ -74,21 +92,26 @@ static void timer_handler(void *data) {
 	}
 }
 
-static void mode_change(uint8_t nextMode)
+static void mode_change(MODE nextMode)
 {
 	switch(nextMode){
+	case start:
+		bgColor = GColorBlue;
+		stop_timer();
+		break;
 	case rest:
 		set_timeStamp(5);
 		bgColor = GColorGreen;
-		mode = rest;
+		start_timer();
 		break;
 	case work:
 		set_timeStamp(25);
 		bgColor = GColorRed;
-		mode = work;
+		start_timer();
 		break;
 	}
-	app_timer_register(0, timer_handler, NULL);
+	mode = nextMode;
+	persist_write_int(PERSIST_MODE, nextMode);
 	draw_timer();
 }
 
@@ -106,7 +129,7 @@ static void mode_reverse(void)
 
 // click
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-	if(mode==start) mode_reverse();
+	if(mode==start) mode_change(work);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -129,9 +152,11 @@ void check_persist(void)
 {
 	if(!persist_exists(PERSIST_MODE)){
 		mode = start;
+		persist_write_int(PERSIST_MODE, mode);
 	}else{
 		mode = persist_read_int(PERSIST_MODE);
-		timeStamp = persist_read_int(PERSIST_TIME_STAMP);
+		if(persist_exists(PERSIST_TIME_STAMP)
+				timeStamp = persist_read_int(PERSIST_TIME_STAMP);
 	}
 	show_timer();
 }
@@ -147,12 +172,10 @@ void show_timer(void) {
 
 	window_set_click_config_provider(s_window, click_config_provider);
 
-	bgColor = GColorBlue;
-	set_timeStamp(25);
-	draw_timer();
+	mode_change(mode);
 	window_stack_push(s_window, true);
 }
 
-	void hide_timer(void) {
-		window_stack_remove(s_window, true);
-	}
+void hide_timer(void) {
+	window_stack_remove(s_window, true);
+}
