@@ -87,7 +87,6 @@ static void timer_handler(void *data) {
 		vibes_double_pulse();
 		mode_reverse();
 	}else{
-	// 1000msŒã‚É‚Ü‚½‚±‚ÌŠÖ”‚ğÀs
 	app_timer_register(1000, timer_handler, data);
 	}
 }
