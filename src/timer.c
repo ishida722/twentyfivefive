@@ -1,7 +1,13 @@
 #include <pebble.h>
 #include "timer.h"
 
-enum{PERSIST_TIME_STAMP, PERSIST_MODE};
+#define WAKEUP_REASON 0
+
+enum { PERSIST_TIME_STAMP,
+	   PERSIST_MODE,
+	   WAKEUP_ID_KEY
+};
+
 typedef enum{start, work, rest}MODE;
 
 static StatusBarLayer *s_status_bar;
@@ -11,6 +17,7 @@ static int leftTime;
 static time_t timeStamp;
 static _Bool timerEnable = false;
 static GColor bgColor;
+static Wakeupid s_wakeup_id;
 
 // prottype
 
@@ -48,14 +55,21 @@ static void destroy_ui(void) {
 // END AUTO-GENERATED UI CODE
 //////////////////////////////////////////////////////////////////////////////////
 
+static void timeout(void)
+{
+	vibes_double_pulse();
+	if(persist_exists(PERSIST_TIME_STAMP))
+		persist_delete(PERSIST_TIME_STAMP);
+	mode_reverse();
+}
+
 static void timer_handler(void *data) {
     if(!timerEnable) return;
 	leftTime = timeStamp - time(NULL);
 	draw_timer();
 
 	if(leftTime<1){
-		vibes_double_pulse();
-		mode_reverse();
+		timeout();
 	}else{
 	app_timer_register(1000, timer_handler, data);
 	}
@@ -133,7 +147,6 @@ static void mode_reverse(void)
 		break;
 	}
 }
-
 
 // click
 //////////////////////////////////////////////////////////////////////////////////
