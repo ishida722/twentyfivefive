@@ -63,7 +63,7 @@ static void timer_handler(void *data) {
 
 static void set_timeStamp(uint8_t minuts)
 {
-    if(persist_exists(PERSIST_TIME_STAMP)){
+    if(!persist_exists(PERSIST_TIME_STAMP)){
         timerEnable = true;
         leftTime = 60 * minuts - 1;
         timeStamp = time(NULL) + leftTime;
