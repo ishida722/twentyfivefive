@@ -134,7 +134,9 @@ static void mode_reverse(void)
 	}
 }
 
+
 // click
+//////////////////////////////////////////////////////////////////////////////////
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
     if(mode==work || mode==rest) mode_change(start);
 	else mode_change(work);
@@ -151,6 +153,7 @@ static void click_config_provider(void *context) {
 	window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
 	window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
+//////////////////////////////////////////////////////////////////////////////////
 
 static void handle_window_unload(Window* window) {
 	destroy_ui();
