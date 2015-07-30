@@ -6,7 +6,9 @@
 enum { PERSIST_TIME_STAMP,
 	   PERSIST_MODE,
 	   WAKEUP_ID_KEY,
-	   TODAY_COUNT
+	   COUNT_TODAY,
+	   COUNT_YESTERDAY,
+	   DAY
 };
 
 typedef enum{start, work, rest}MODE;
@@ -59,7 +61,7 @@ static void destroy_ui(void) {
 static void count_up(void)
 {
 	int count;
-	count = persist_read_int(TODAY_COUNT);
+	count = persist_read_int(COUNT_TODAY);
 	count++;
 	persist_write_int(count);
 }
@@ -196,8 +198,8 @@ void check_persist(void)
 		if(persist_exists(PERSIST_TIME_STAMP))
 				timeStamp = persist_read_int(PERSIST_TIME_STAMP);
 	}
-	if(!persist_exists(TODAY_COUNT)
-			persist_write_int(TODAY_COUNT, 0);
+	if(!persist_exists(COUNT_TODAY)
+			persist_write_int(COUNT_TODAY, 0);
 }
 
 static void wakeup_handler(WakeupId id, int32_t reson)
