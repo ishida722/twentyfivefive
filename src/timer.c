@@ -5,7 +5,8 @@
 
 enum { PERSIST_TIME_STAMP,
 	   PERSIST_MODE,
-	   WAKEUP_ID_KEY
+	   WAKEUP_ID_KEY,
+	   TODAY_COUNT
 };
 
 typedef enum{start, work, rest}MODE;
@@ -55,12 +56,21 @@ static void destroy_ui(void) {
 // END AUTO-GENERATED UI CODE
 //////////////////////////////////////////////////////////////////////////////////
 
+static void count_up(void)
+{
+	int count;
+	count = persist_read_int(TODAY_COUNT);
+	count++;
+	persist_write_int(count);
+}
+
 static void timeout(void)
 {
 	vibes_double_pulse();
 	if(persist_exists(PERSIST_TIME_STAMP))
 		persist_delete(PERSIST_TIME_STAMP);
 	wakeup_cancel_all();
+	count_up();
 	mode_reverse();
 }
 
@@ -186,6 +196,8 @@ void check_persist(void)
 		if(persist_exists(PERSIST_TIME_STAMP))
 				timeStamp = persist_read_int(PERSIST_TIME_STAMP);
 	}
+	if(!persist_exists(TODAY_COUNT)
+			persist_write_int(TODAY_COUNT, 0);
 }
 
 static void wakeup_handler(WakeupId id, int32_t reson)
@@ -202,6 +214,7 @@ void show_timer(void) {
 	window_set_window_handlers(s_window, (WindowHandlers) {
 			.unload = handle_window_unload,
 			});
+
 
 	wakeup_service_subscribe(wakeup_handler);
 	window_set_click_config_provider(s_window, click_config_provider);
