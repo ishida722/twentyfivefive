@@ -2,16 +2,16 @@
 #include "timer.h"
 
 static void init(void) {
-    check_persist();
-	show_timer();
+	/* check_persist(); */
+	/* show_timer(); */
 }
 
 static void deinit(void) {
-	hide_timer();
+	/* hide_timer(); */
 }
 
 int main(void) {
-  init();
-  app_event_loop();
-  deinit();
+	/* init(); */
+	app_event_loop();
+	/* deinit(); */
 }
