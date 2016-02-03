@@ -58,6 +58,8 @@ static void click_config_provider(void *context)
 
 static void init(void) {
 	standby_window = window_create();
+	work_window = window_create();
+	rest_window = window_create();
 	window_set_window_handlers(standby_window, (WindowHandlers) {
 			.load = standby_window_load,
 			.unload = standby_window_unload,
