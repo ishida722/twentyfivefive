@@ -76,7 +76,7 @@ static void init(void) {
 	window_set_click_config_provider(standby_window, click_config_provider);
 	window_set_click_config_provider(work_window, click_config_provider);
 	window_set_click_config_provider(rest_window, click_config_provider);
-	psleep(100);
+	window_stack_push(standby_window);
 }
 
 static void deinit(void) {
