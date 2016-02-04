@@ -63,6 +63,7 @@ void show_standby(void) {
     .unload = handle_window_unload,
   });
   window_set_click_config_provider(s_window, click_config_provider);
+  window_set_background_color(s_window, GColorBlue);
   window_stack_push(s_window, true);
 }
 
