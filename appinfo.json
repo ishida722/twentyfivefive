@@ -4,6 +4,7 @@
         ""
     ],
     "companyName": "they.know.who.is.the.strongest",
+    "enableMultiJS": false,
     "longName": "25:5",
     "projectType": "native",
     "resources": {
