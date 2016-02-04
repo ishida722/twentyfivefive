@@ -1,5 +1,7 @@
 #include <pebble.h>
+#include "standby.h"
 #include "work.h"
+#include "rest.h"
 
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
@@ -28,6 +30,26 @@ static void destroy_ui(void) {
   text_layer_destroy(modeName);
 }
 // END AUTO-GENERATED UI CODE
+static void up_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+}
+
+static void select_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+	show_rest();
+	hide_work();
+}
+
+static void down_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+}
+
+static void click_config_provider(void *context)
+{
+	window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+	window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+	window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+}
 
 static void handle_window_unload(Window* window) {
   destroy_ui();
@@ -38,6 +60,7 @@ void show_work(void) {
   window_set_window_handlers(s_window, (WindowHandlers) {
     .unload = handle_window_unload,
   });
+  window_set_click_config_provider(s_window, click_config_provider);
   window_stack_push(s_window, true);
 }
 
