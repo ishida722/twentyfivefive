@@ -7,6 +7,7 @@
 static Window *s_window;
 static GFont s_res_gothic_28_bold;
 static TextLayer *modeName;
+static TextLayer *left_time;
 
 static void initialise_ui(void) {
   s_window = window_create();
@@ -23,11 +24,19 @@ static void initialise_ui(void) {
   text_layer_set_text_alignment(modeName, GTextAlignmentCenter);
   text_layer_set_font(modeName, s_res_gothic_28_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)modeName);
+  
+  // left_time
+  left_time = text_layer_create(GRect(26, 87, 100, 20));
+  text_layer_set_background_color(left_time, GColorClear);
+  text_layer_set_text(left_time, "00");
+  text_layer_set_text_alignment(left_time, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)left_time);
 }
 
 static void destroy_ui(void) {
   window_destroy(s_window);
   text_layer_destroy(modeName);
+  text_layer_destroy(left_time);
 }
 // END AUTO-GENERATED UI CODE
 static void up_click_handler(ClickRecognizerRef recognizer, void *context)
